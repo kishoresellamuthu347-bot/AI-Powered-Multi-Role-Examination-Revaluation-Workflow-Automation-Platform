@@ -55,19 +55,21 @@ class LocalMockProvider(AIProvider):
 
     def analyze_answer(self, ocr_text: str, criteria: list) -> Tuple[float, float, float, str]:
         random.seed(ocr_text)
-        max_total = sum(c.max_marks for c in criteria) if criteria else 15
-        # Simulate ~75-90% attainment with mild randomness, deterministic per answer
-        ratio = 0.72 + (random.random() * 0.18)
-        suggested = round(max_total * ratio * 2) / 2  # nearest 0.5
-        confidence = round(0.78 + random.random() * 0.17, 2)
+        max_total = sum(c.max_marks for c in criteria) if criteria else 100
+        # If criteria summed to an old smaller number (e.g. <= 25), scale to 100 marks standard
+        if max_total <= 25:
+            max_total = 100
+        # Simulate ~75-88% attainment (e.g. 74 - 86 marks out of 100)
+        ratio = 0.72 + (random.random() * 0.16)
+        suggested = round(max_total * ratio)  # clean whole integer marks out of 100
+        confidence = round(0.82 + random.random() * 0.14, 2)
         explanation = (
-            "The response addresses the core concept and most rubric criteria with "
-            "correct terminology and a worked example. A minor gap remains in edge-case "
-            "or complexity justification, consistent with the marks withheld below. "
-            "This is a suggestion only — the assigned evaluator holds final authority "
-            "over the awarded mark."
+            "The candidate script shows comprehensive grasp of core syllabus topics and rubric criteria. "
+            "Handwritten solutions demonstrate clear algorithmic derivations, step-by-step traces, and sound problem-solving. "
+            "Minor penalties applied for incomplete boundary condition proofs. "
+            "Evaluator confirmation is required for final grading."
         )
-        return suggested, max_total, confidence, explanation
+        return float(suggested), float(max_total), confidence, explanation
 
 
 def get_ai_provider() -> AIProvider:

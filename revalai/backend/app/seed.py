@@ -16,6 +16,7 @@ def seed():
             models.Subject(code="CS304", name="Database Systems", department="CSE"),
             models.Subject(code="MA205", name="Discrete Mathematics", department="Mathematics"),
             models.Subject(code="CS310", name="Operating Systems", department="CSE"),
+            models.Subject(code="CS305", name="Computer Networks", department="CSE"),
         ]
         db.add_all(subjects)
         db.commit()
@@ -45,14 +46,17 @@ def seed():
             models.Result(student_id=student.id, subject_id=subjects[1].id, marks=71, max_marks=100, eligible_for_revaluation=False),
             models.Result(student_id=student.id, subject_id=subjects[2].id, marks=49, max_marks=100, eligible_for_revaluation=True),
             models.Result(student_id=student.id, subject_id=subjects[3].id, marks=63, max_marks=100, eligible_for_revaluation=True),
+            models.Result(student_id=student.id, subject_id=subjects[4].id, marks=52, max_marks=100, eligible_for_revaluation=True),
         ]
         db.add_all(results)
         db.commit()
 
         rubric_seed = {
-            "CS301": [("Correctness of algorithm", 6), ("Time/space complexity analysis", 4), ("Edge case handling", 3), ("Clarity of explanation", 2)],
-            "CS310": [("Concept definition", 5), ("Worked example", 5), ("Edge case discussion", 3), ("Clarity of explanation", 2)],
-            "MA205": [("Proof correctness", 6), ("Notation & rigor", 4), ("Worked example", 3), ("Clarity of explanation", 2)],
+            "CS301": [("Correctness of algorithm & logic", 35), ("Time & space complexity derivation", 25), ("Worked traces & array diagrams", 25), ("Edge case & constraint handling", 15)],
+            "CS304": [("Relational schema & SQL query design", 35), ("Normalization & functional dependency proofs", 25), ("Transaction ACID & concurrency control", 25), ("Indexing & query optimization", 15)],
+            "MA205": [("Mathematical induction & proof rigor", 35), ("Graph theory theorems & formulations", 25), ("Combinatorics worked solutions", 25), ("Clarity of logical deduction", 15)],
+            "CS310": [("Process synchronization & Deadlock avoidance", 35), ("Virtual memory & page replacement algorithms", 25), ("CPU scheduling simulations", 25), ("File systems & I/O management", 15)],
+            "CS305": [("OSI & TCP/IP protocol architecture", 35), ("Subnetting & routing algorithms (Dijkstra/Bellman-Ford)", 25), ("TCP congestion control & sliding window", 25), ("DNS, HTTP & socket programming", 15)],
         }
         subj_by_code = {s.code: s for s in subjects}
         for code, criteria in rubric_seed.items():

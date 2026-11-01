@@ -22,7 +22,7 @@ export default function StudentDashboard({ onLogout, notify }) {
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(null); // result being applied for
   const [paying, setPaying] = useState(null);
-  const [viewingScriptApp, setViewingScriptApp] = useState(null); // application whose script is opened
+  const [viewingPaper, setViewingPaper] = useState(null); // subject result object being inspected
 
   const nav = [
     { id: "dashboard", label: "Dashboard", icon: Activity },
@@ -154,14 +154,21 @@ export default function StudentDashboard({ onLogout, notify }) {
                         <td className="px-5 py-3.5">
                           {r.eligible_for_revaluation ? <Badge tone="orange">Eligible</Badge> : <Badge tone="slate">Not eligible</Badge>}
                         </td>
-                        <td className="px-5 py-3.5 text-right">
-                          {r.eligible_for_revaluation && !alreadyApplied && (
-                            <button onClick={() => handleApply(r)} className="px-4 py-2 rounded-xl bg-orange-glow text-xs font-black text-black hover:brightness-110 transition-all shadow-[0_0_15px_rgba(255,107,0,0.45)]">
-                              Apply for Revaluation →
+                          <td className="px-5 py-3.5 text-right flex items-center justify-end gap-2.5">
+                            <button
+                              onClick={() => setViewingPaper(r)}
+                              className="px-3.5 py-1.5 rounded-xl border border-charcoal-700 bg-charcoal-900 text-charcoal-200 hover:text-white hover:border-orange-500/60 text-xs font-bold transition-all flex items-center gap-1.5"
+                            >
+                              <Eye size={13} className="text-orange-400" />
+                              View Script
                             </button>
-                          )}
-                          {alreadyApplied && <span className="text-xs text-orange-400 font-mono font-black">Already applied ✓</span>}
-                        </td>
+                            {r.eligible_for_revaluation && !alreadyApplied && (
+                              <button onClick={() => handleApply(r)} className="px-4 py-2 rounded-xl bg-orange-glow text-xs font-black text-black hover:brightness-110 transition-all shadow-[0_0_15px_rgba(255,107,0,0.45)]">
+                                Apply for Revaluation →
+                              </button>
+                            )}
+                            {alreadyApplied && <span className="text-xs text-orange-400 font-mono font-black">Already applied ✓</span>}
+                          </td>
                       </tr>
                     );
                   })}
@@ -259,35 +266,36 @@ export default function StudentDashboard({ onLogout, notify }) {
             )}
 
             {/* Student View Answer Paper Modal */}
-            {viewingScriptApp && (
+            {viewingPaper && (
               <div 
-                className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" 
-                onClick={() => setViewingScriptApp(null)}
+                className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6" 
+                onClick={() => setViewingPaper(null)}
               >
                 <div 
-                  className="max-w-4xl w-full max-h-[90vh] overflow-y-auto bg-[#0C120F] border border-[#1E3E2E] rounded-3xl shadow-[0_15px_60px_rgba(0,0,0,0.95)] p-6"
+                  className="max-w-5xl w-full max-h-[92vh] overflow-y-auto bg-charcoal-950 border border-charcoal-700 rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.98)] p-5"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#16251E]">
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-charcoal-800">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-lg font-bold text-white font-serif">Original Answer Script & OCR Breakdown</h2>
-                        <Badge tone="forest">{viewingScriptApp.code}</Badge>
+                        <h2 className="text-lg font-bold text-white font-serif">Original Answer Script (Digital Copy)</h2>
+                        <Badge tone="orange">{viewingPaper.subject.code}</Badge>
                       </div>
-                      <p className="text-xs text-gray-400 mt-0.5">{viewingScriptApp.subject.code} — {viewingScriptApp.subject.name}</p>
+                      <p className="text-xs text-charcoal-300 mt-0.5">{viewingPaper.subject.name} · Score Awarded: <span className="font-bold text-orange-400 font-mono">{viewingPaper.marks} / {viewingPaper.max_marks}</span></p>
                     </div>
                     <button 
-                      onClick={() => setViewingScriptApp(null)}
-                      className="p-1.5 rounded-xl hover:bg-[#15231C] text-gray-400 hover:text-white transition-colors"
+                      onClick={() => setViewingPaper(null)}
+                      className="p-2 rounded-xl hover:bg-charcoal-800 text-charcoal-400 hover:text-white transition-colors"
                     >
-                      <X size={18} />
+                      <X size={20} />
                     </button>
                   </div>
 
                   <AnswerScriptViewer 
-                    subjectCode={viewingScriptApp.subject.code}
-                    applicationCode={viewingScriptApp.code}
+                    subjectCode={viewingPaper.subject.code}
+                    applicationCode={viewingPaper.code || `RES-${viewingPaper.subject.code}`}
                     readOnly={true}
+                    onClose={() => setViewingPaper(null)}
                   />
                 </div>
               </div>
