@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #060709;
+    color: #FFFFFF;
+    font-weight: 700;
+    overflow-x: hidden;
+  }
+
+  /* Make default typography crisp, bold, and high-contrast white */
+  p, span, label, input, button, select, textarea, th, td, div {
+    color: inherit;
+  }
+
+  ::selection {
+    background-color: #FF6B00;
+    color: #000000;
+  }
+
+  /* Custom deep dark + orange scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #060709;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1C222C;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #FF6B00;
+  }
+}
+
+/* Charcoal matrix grid with fiery orange micro-points */
+.bg-charcoal-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 107, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 107, 0, 0.05) 1px, transparent 1px);
+}
+
+/* Fiery Animated Text */
+.fiery-text {
+  background: linear-gradient(90deg, #FF6B00 0%, #FF8533 25%, #FFAA00 50%, #FF4500 75%, #FF6B00 100%);
+  background-size: 250% 250%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fieryFlow 3.5s ease infinite;
+  filter: drop-shadow(0 0 14px rgba(255, 107, 0, 0.5));
+}
+
+/* Fiery Animated Border Card */
+.fiery-border-box {
+  position: relative;
+  border-radius: 1rem;
+}
+.fiery-border-box::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, #FF4500, #FF6B00, #FFAA00, #FF6B00, #EA580C);
+  background-size: 300% 300%;
+  animation: fieryFlow 3s ease infinite;
+  z-index: -1;
+  opacity: 0.85;
+  box-shadow: 0 0 25px rgba(255, 107, 0, 0.4);
+}
+
+/* Fiery Horizontal Flow Bar */
+.fiery-bar {
+  background: linear-gradient(90deg, #FF4500 0%, #FF6B00 25%, #FFAA00 50%, #FF8533 75%, #FF4500 100%);
+  background-size: 200% 200%;
+  animation: fieryFlow 2.5s ease infinite;
+}
+
+@keyframes fieryFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Radiant Fiery Glows */
+.orange-glow-text {
+  text-shadow: 0 0 18px rgba(255, 107, 0, 0.75), 0 0 30px rgba(255, 69, 0, 0.4);
+}
+
+.fiery-card-glow {
+  box-shadow: 0 0 30px -4px rgba(255, 107, 0, 0.35), inset 0 0 20px -5px rgba(255, 107, 0, 0.1);
+  border: 1px solid rgba(255, 107, 0, 0.4);
+}
+
+.fiery-card-glow:hover {
+  box-shadow: 0 0 45px -4px rgba(255, 107, 0, 0.6), inset 0 0 25px -5px rgba(255, 107, 0, 0.2);
+  border-color: rgba(255, 107, 0, 0.75);
+}

@@ -1,0 +1,24 @@
+# Node dependencies
+node_modules/
+revalai/frontend/node_modules/
+
+# Python Virtual Environments
+venv/
+revalai/backend/venv/
+__pycache__/
+*.pyc
+
+# Local SQLite databases
+*.db
+revalai.db
+revalai/backend/revalai.db
+
+# Build outputs
+dist/
+revalai/frontend/dist/
+.vite/
+
+# Temporary / Scratch
+scratch/
+extracted_imgs/
+screenshots/test_*.png
