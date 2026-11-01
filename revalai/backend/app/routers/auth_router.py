@@ -49,16 +49,28 @@ def register(payload: schemas.RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
-    # If new user is a student, attach initial results for demo eligibility
+    # If new user is a student, attach all 5 subjects with marks out of 100
     if user.role == models.RoleEnum.student:
         subjects = db.query(models.Subject).all()
-        if subjects:
-            r1 = models.Result(student_id=user.id, subject_id=subjects[0].id, marks=52, max_marks=100, eligible_for_revaluation=True)
-            db.add(r1)
-            if len(subjects) > 1:
-                r2 = models.Result(student_id=user.id, subject_id=subjects[1].id, marks=68, max_marks=100, eligible_for_revaluation=True)
-                db.add(r2)
-            db.commit()
+        # Default marks pattern for all 5 subjects
+        default_marks = {
+            "CS301": (58, True),
+            "CS304": (71, False),
+            "MA205": (49, True),
+            "CS310": (63, True),
+            "CS305": (52, True)
+        }
+        for sub in subjects:
+            m, elig = default_marks.get(sub.code, (55, True))
+            res = models.Result(
+                student_id=user.id,
+                subject_id=sub.id,
+                marks=m,
+                max_marks=100,
+                eligible_for_revaluation=elig
+            )
+            db.add(res)
+        db.commit()
 
     token = auth.create_access_token({"sub": str(user.id), "role": user.role.value})
     return schemas.Token(access_token=token, role=user.role.value, name=user.name, user_id=user.id)
