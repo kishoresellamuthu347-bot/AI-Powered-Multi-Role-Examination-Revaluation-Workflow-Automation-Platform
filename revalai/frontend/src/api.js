@@ -50,6 +50,10 @@ export const api = {
   // evaluator
   myAssignments: () => request("/evaluator/assignments"),
   runAI: (application_id) => request(`/evaluator/applications/${application_id}/run-ai`, { method: "POST" }),
+  uploadAndEvaluate: (payload) => request("/evaluator/upload-and-evaluate", { 
+    method: "POST", 
+    body: payload 
+  }),
   submitEvaluation: (application_id, final_marks, comments) =>
     request(`/evaluator/applications/${application_id}/submit`, { method: "POST", body: { application_id, final_marks, comments } }),
 

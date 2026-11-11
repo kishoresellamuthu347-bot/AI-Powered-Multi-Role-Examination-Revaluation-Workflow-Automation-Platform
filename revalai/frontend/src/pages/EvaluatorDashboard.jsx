@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ClipboardList, History, ChevronLeft, FileSearch, Edit3, Eye, ScanLine,
-  Brain, Sparkles, CheckCircle2, Send, AlertCircle, ListChecks, BookOpen, Columns, Layers
+  Brain, Sparkles, CheckCircle2, Send, AlertCircle, ListChecks, BookOpen, Columns, Layers, Upload
 } from "lucide-react";
 import Shell from "../components/Shell";
 import { Card, Badge, PrimaryButton, GhostButton, StatCard, SectionHeader } from "../components/ui";
 import AnswerScriptViewer from "../components/AnswerScriptViewer";
 import QuestionPaperViewer from "../components/QuestionPaperViewer";
+import DocumentUploadEvaluation from "../components/DocumentUploadEvaluation";
 import { api } from "../api";
 
 export default function EvaluatorDashboard({ onLogout, notify }) {
@@ -44,6 +45,7 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
 
   const nav = [
     { id: "assignments", label: "Assignments", icon: ClipboardList },
+    { id: "upload", label: "Upload & Test PDF Evaluation", icon: Upload },
     { id: "history", label: "Evaluation History", icon: History },
   ];
 
@@ -347,6 +349,16 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
                   </div>
                 </div>
               </div>
+            </>
+          )}
+
+          {active === "upload" && (
+            <>
+              <SectionHeader 
+                title="Live Document Upload & Multi-Modal Evaluation" 
+                sub="Upload custom university Question Paper PDFs and handwritten Student Answer Scripts to evaluate." 
+              />
+              <DocumentUploadEvaluation subjectCode="CS301" notify={notify} />
             </>
           )}
 

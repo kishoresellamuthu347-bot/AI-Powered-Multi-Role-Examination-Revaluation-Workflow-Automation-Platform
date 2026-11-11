@@ -48,3 +48,4 @@ revalai/dataset/
   - Part B (Algorithm Implementation / Traces / Subnets): 30 Marks
 - **Handwriting Ground Truth Benchmark:**
   - Formatted based on the **IAM Handwriting Dataset** and **George Washington Academic Script** conventions, capturing irregular cursive strokes, mathematical sub/superscripts ($T(n) = 2T(n/2) + O(n)$), ASCII memory trees, and matrix tables.
+
