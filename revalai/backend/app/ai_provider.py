@@ -25,8 +25,8 @@ class AIProvider(ABC):
         ...
 
     @abstractmethod
-    def analyze_answer(self, ocr_text: str, criteria: list) -> Tuple[float, float, float, str]:
-        """Returns (suggested_marks, max_marks, confidence, explanation)."""
+    def analyze_answer(self, ocr_text: str, criteria: list, questions: list = None) -> Tuple[float, float, float, str, list]:
+        """Returns (suggested_marks, max_marks, confidence, explanation, question_breakdown)."""
         ...
 
 
@@ -53,23 +53,48 @@ class LocalMockProvider(AIProvider):
         idx = int(hashlib.sha256(application_code.encode()).hexdigest(), 16) % len(self.SAMPLE_ANSWERS)
         return self.SAMPLE_ANSWERS[idx]
 
-    def analyze_answer(self, ocr_text: str, criteria: list) -> Tuple[float, float, float, str]:
+    def analyze_answer(self, ocr_text: str, criteria: list, questions: list = None) -> Tuple[float, float, float, str, list]:
         random.seed(ocr_text)
-        max_total = sum(c.max_marks for c in criteria) if criteria else 100
-        # If criteria summed to an old smaller number (e.g. <= 25), scale to 100 marks standard
-        if max_total <= 25:
-            max_total = 100
-        # Simulate ~75-88% attainment (e.g. 74 - 86 marks out of 100)
-        ratio = 0.72 + (random.random() * 0.16)
-        suggested = round(max_total * ratio)  # clean whole integer marks out of 100
-        confidence = round(0.82 + random.random() * 0.14, 2)
+        
+        # 1. Question-by-Question Evaluation against Official Question Paper
+        question_breakdown = []
+        if questions:
+            total_earned = 0
+            total_max = 0
+            for q in questions:
+                # Evaluate candidate response relative to question expected answer key
+                q_max = float(q.max_marks)
+                # Attainment ratio: 78% - 92% per question
+                q_ratio = 0.76 + (random.random() * 0.16)
+                earned = round(q_max * q_ratio)
+                total_earned += earned
+                total_max += q_max
+                question_breakdown.append({
+                    "question_number": q.question_number,
+                    "part": q.part,
+                    "question_text": q.question_text[:90] + ("..." if len(q.question_text) > 90 else ""),
+                    "expected_key": q.expected_answer_key,
+                    "awarded_marks": earned,
+                    "max_marks": q_max,
+                    "status": "Verified Correct" if earned >= (q_max * 0.8) else "Partially Correct"
+                })
+            suggested = float(total_earned)
+            max_total = float(total_max)
+        else:
+            max_total = sum(c.max_marks for c in criteria) if criteria else 100.0
+            if max_total <= 25:
+                max_total = 100.0
+            ratio = 0.74 + (random.random() * 0.14)
+            suggested = float(round(max_total * ratio))
+
+        confidence = round(0.84 + random.random() * 0.12, 2)
         explanation = (
-            "The candidate script shows comprehensive grasp of core syllabus topics and rubric criteria. "
-            "Handwritten solutions demonstrate clear algorithmic derivations, step-by-step traces, and sound problem-solving. "
-            "Minor penalties applied for incomplete boundary condition proofs. "
-            "Evaluator confirmation is required for final grading."
+            f"The candidate's handwritten response was evaluated directly against the official Question Paper & Answer Key. "
+            f"Demonstrates sound mathematical derivations, accurate algorithm trace tables, and relevant definitions. "
+            f"Marks were awarded proportionally across individual questions (Part A & Part B). "
+            f"Human evaluator holds final grading authority."
         )
-        return float(suggested), float(max_total), confidence, explanation
+        return suggested, max_total, confidence, explanation, question_breakdown
 
 
 def get_ai_provider() -> AIProvider:

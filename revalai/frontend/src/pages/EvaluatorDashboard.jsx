@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
   ClipboardList, History, ChevronLeft, FileSearch, Edit3, Eye, ScanLine,
-  Brain, Sparkles, CheckCircle2, Send, AlertCircle, ListChecks,
+  Brain, Sparkles, CheckCircle2, Send, AlertCircle, ListChecks, BookOpen, Columns, Layers
 } from "lucide-react";
 import Shell from "../components/Shell";
 import { Card, Badge, PrimaryButton, GhostButton, StatCard, SectionHeader } from "../components/ui";
 import AnswerScriptViewer from "../components/AnswerScriptViewer";
+import QuestionPaperViewer from "../components/QuestionPaperViewer";
 import { api } from "../api";
 
 export default function EvaluatorDashboard({ onLogout, notify }) {
@@ -45,6 +46,8 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
     { id: "assignments", label: "Assignments", icon: ClipboardList },
     { id: "history", label: "Evaluation History", icon: History },
   ];
+
+  const [viewMode, setViewMode] = useState("split"); // 'split' (side-by-side) | 'script' | 'qp'
 
   function openPaper(app) {
     setOpenCase(app);
@@ -130,18 +133,136 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
               <button onClick={() => setActive("assignments")} className="flex items-center gap-1.5 text-sm text-[#7A7566] hover:text-ink mb-4">
                 <ChevronLeft size={15} /> Back to assignments
               </button>
-              <SectionHeader title={`${openCase.subject.code} — ${openCase.subject.name}`} sub={openCase.code} />
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                <SectionHeader title={`${openCase.subject.code} — ${openCase.subject.name}`} sub={openCase.code} />
+                {/* View Mode Switcher */}
+                <div className="flex items-center bg-charcoal-900 border border-charcoal-700 rounded-xl p-1 gap-1 text-xs font-bold">
+                  <button
+                    onClick={() => setViewMode("split")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                      viewMode === "split" ? "bg-orange-500 text-black shadow-md font-black" : "text-charcoal-300 hover:text-white"
+                    }`}
+                  >
+                    <Columns size={14} /> Side-by-Side Dual View
+                  </button>
+                  <button
+                    onClick={() => setViewMode("qp")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                      viewMode === "qp" ? "bg-blue-600 text-white shadow-md font-black" : "text-charcoal-300 hover:text-white"
+                    }`}
+                  >
+                    <BookOpen size={14} /> Question Paper Only
+                  </button>
+                  <button
+                    onClick={() => setViewMode("script")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                      viewMode === "script" ? "bg-orange-600 text-white shadow-md font-black" : "text-charcoal-300 hover:text-white"
+                    }`}
+                  >
+                    <FileSearch size={14} /> Answer Script Only
+                  </button>
+                </div>
+              </div>
 
               <div className="space-y-6">
-                {/* Visual Answer Script with OCR and AI tabs */}
-                <AnswerScriptViewer 
-                  subjectCode={openCase.subject.code}
-                  applicationCode={openCase.code}
-                  onRunOCR={runPipeline}
-                  analysis={analysis}
-                  running={running}
-                  isEvaluator={true}
-                />
+                {/* Dual View or Single View Mode */}
+                {viewMode === "split" && (
+                  <div className="grid xl:grid-cols-2 gap-6 items-start">
+                    {/* Left: Official Question Paper */}
+                    <div>
+                      <QuestionPaperViewer 
+                        questionPaper={openCase.question_paper} 
+                        subjectCode={openCase.subject.code} 
+                      />
+                    </div>
+
+                    {/* Right: Student Handwritten Answer Script */}
+                    <div>
+                      <AnswerScriptViewer 
+                        subjectCode={openCase.subject.code}
+                        applicationCode={openCase.code}
+                        onRunOCR={runPipeline}
+                        analysis={analysis}
+                        running={running}
+                        isEvaluator={true}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {viewMode === "qp" && (
+                  <QuestionPaperViewer 
+                    questionPaper={openCase.question_paper} 
+                    subjectCode={openCase.subject.code} 
+                  />
+                )}
+
+                {viewMode === "script" && (
+                  <AnswerScriptViewer 
+                    subjectCode={openCase.subject.code}
+                    applicationCode={openCase.code}
+                    onRunOCR={runPipeline}
+                    analysis={analysis}
+                    running={running}
+                    isEvaluator={true}
+                  />
+                )}
+
+                {/* Question-Wise AI Rubric Breakdown Card (if analysis completed) */}
+                {analysis && analysis.question_breakdown && analysis.question_breakdown.length > 0 && (
+                  <Card className="p-6 bg-charcoal-900 border border-blue-900/50 shadow-xl">
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-charcoal-800">
+                      <div className="flex items-center gap-2.5">
+                        <Sparkles size={20} className="text-orange-400" />
+                        <div>
+                          <p className="font-extrabold text-white text-base font-display">
+                            Question-by-Question AI Alignment & Scoring
+                          </p>
+                          <p className="text-xs text-charcoal-400">
+                            Candidate answer evaluated against each Question in the Official Exam Paper.
+                          </p>
+                        </div>
+                      </div>
+                      <Badge tone="rainbow">Question-Aware Grading</Badge>
+                    </div>
+
+                    <div className="space-y-3">
+                      {analysis.question_breakdown.map((item, idx) => (
+                        <div key={idx} className="p-4 rounded-xl bg-charcoal-950 border border-charcoal-800 flex items-start justify-between gap-4 flex-wrap">
+                          <div className="space-y-1 flex-1 min-w-[280px]">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-xs font-bold">
+                                {item.question_number}
+                              </span>
+                              <span className="text-[11px] font-mono text-charcoal-400 font-bold uppercase">
+                                {item.part}
+                              </span>
+                              <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                                • {item.status}
+                              </span>
+                            </div>
+                            <p className="text-xs text-white font-medium leading-snug">
+                              {item.question_text}
+                            </p>
+                            {item.expected_key && (
+                              <p className="text-[11px] font-mono text-charcoal-400">
+                                <span className="text-blue-400 font-bold">Answer Key Match:</span> {item.expected_key}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-xs text-charcoal-400 font-mono">Awarded: </span>
+                            <span className="text-lg font-black text-orange-400 font-mono">
+                              {item.awarded_marks}
+                            </span>
+                            <span className="text-xs text-charcoal-400 font-mono"> / {item.max_marks}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
 
                 {/* Evaluation Marks & Recommendation Form */}
                 <div className="grid lg:grid-cols-5 gap-6">

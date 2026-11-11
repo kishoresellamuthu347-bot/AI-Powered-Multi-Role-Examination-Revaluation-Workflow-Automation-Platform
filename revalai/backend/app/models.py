@@ -75,6 +75,33 @@ class RubricCriterion(Base):
     max_marks = Column(Float, nullable=False)
 
 
+class QuestionPaper(Base):
+    __tablename__ = "question_papers"
+    id = Column(Integer, primary_key=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), unique=True)
+    paper_code = Column(String, nullable=False)
+    total_marks = Column(Float, default=100)
+    duration_hours = Column(Float, default=3.0)
+    instructions = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=now)
+
+    subject = relationship("Subject")
+    questions = relationship("ExamQuestion", back_populates="paper", cascade="all, delete-orphan")
+
+
+class ExamQuestion(Base):
+    __tablename__ = "exam_questions"
+    id = Column(Integer, primary_key=True)
+    paper_id = Column(Integer, ForeignKey("question_papers.id"))
+    question_number = Column(String, nullable=False)  # e.g. "Q1", "Q2", "Q3"
+    part = Column(String, default="Part A")           # "Part A" | "Part B"
+    question_text = Column(Text, nullable=False)
+    max_marks = Column(Float, nullable=False)
+    expected_answer_key = Column(Text, nullable=True) # Expected solution key for AI comparison
+
+    paper = relationship("QuestionPaper", back_populates="questions")
+
+
 class RevaluationApplication(Base):
     __tablename__ = "revaluation_applications"
     id = Column(Integer, primary_key=True)
@@ -99,6 +126,15 @@ class RevaluationApplication(Base):
     result = relationship("Result")
     history = relationship("StatusHistory", back_populates="application", cascade="all, delete-orphan")
 
+    @property
+    def question_paper(self):
+        from .database import SessionLocal
+        db = SessionLocal()
+        try:
+            return db.query(QuestionPaper).filter_by(subject_id=self.subject_id).first()
+        finally:
+            db.close()
+
 
 class StatusHistory(Base):
     __tablename__ = "revaluation_status_history"
@@ -121,6 +157,7 @@ class AIAnalysis(Base):
     max_marks = Column(Float, nullable=True)
     confidence = Column(Float, nullable=True)
     explanation = Column(Text, nullable=True)
+    question_breakdown_json = Column(Text, nullable=True) # JSON string of question-by-question scoring
     provider = Column(String, default="LocalMockProvider")
     created_at = Column(DateTime, default=now)
 

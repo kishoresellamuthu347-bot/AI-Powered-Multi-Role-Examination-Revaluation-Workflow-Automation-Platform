@@ -37,6 +37,7 @@ def _get_owned_application(db: Session, application_id: int, evaluator_id: int) 
 
 @router.post("/applications/{application_id}/run-ai", response_model=schemas.AIAnalysisOut)
 def run_ai(application_id: int, user: models.User = Depends(_require_evaluator), db: Session = Depends(get_db)):
+    import json
     app_row = _get_owned_application(db, application_id, user.id)
 
     if app_row.status == models.ApplicationStatus.evaluator_assigned:
@@ -46,23 +47,54 @@ def run_ai(application_id: int, user: models.User = Depends(_require_evaluator),
 
     existing = db.query(models.AIAnalysis).filter(models.AIAnalysis.application_id == application_id).first()
     if existing:
-        return existing
+        breakdown = []
+        if existing.question_breakdown_json:
+            try:
+                breakdown = json.loads(existing.question_breakdown_json)
+            except Exception:
+                breakdown = []
+        return schemas.AIAnalysisOut(
+            ocr_text=existing.ocr_text or "",
+            suggested_marks=existing.suggested_marks or 0.0,
+            max_marks=existing.max_marks or 100.0,
+            confidence=existing.confidence or 0.85,
+            explanation=existing.explanation or "",
+            question_breakdown=breakdown,
+            provider=existing.provider or "LocalMockProvider"
+        )
 
     criteria = db.query(models.RubricCriterion).filter(models.RubricCriterion.subject_id == app_row.subject_id).all()
+    
+    # Retrieve official Question Paper & Questions for this subject
+    qp = db.query(models.QuestionPaper).filter_by(subject_id=app_row.subject_id).first()
+    questions = qp.questions if qp else []
+
     provider = get_ai_provider()
     ocr_text = provider.run_ocr(app_row.code)
-    suggested, max_marks, confidence, explanation = provider.analyze_answer(ocr_text, criteria)
+    suggested, max_marks, confidence, explanation, breakdown = provider.analyze_answer(ocr_text, criteria, questions)
+
+    breakdown_json = json.dumps(breakdown) if breakdown else None
 
     analysis = models.AIAnalysis(
         application_id=application_id, ocr_text=ocr_text, suggested_marks=suggested,
-        max_marks=max_marks, confidence=confidence, explanation=explanation, provider=provider.name,
+        max_marks=max_marks, confidence=confidence, explanation=explanation,
+        question_breakdown_json=breakdown_json, provider=provider.name,
     )
     db.add(analysis)
     db.commit()
     db.refresh(analysis)
 
-    log_action(db, actor="AI System", action=f"Generated AI recommendation for {app_row.code} ({suggested}/{max_marks}, {int(confidence*100)}% confidence)", category="ai")
-    return analysis
+    log_action(db, actor="AI System", action=f"Generated Question-Aware AI recommendation for {app_row.code} ({suggested}/{max_marks}, {int(confidence*100)}% confidence)", category="ai")
+    
+    return schemas.AIAnalysisOut(
+        ocr_text=analysis.ocr_text,
+        suggested_marks=analysis.suggested_marks,
+        max_marks=analysis.max_marks,
+        confidence=analysis.confidence,
+        explanation=analysis.explanation,
+        question_breakdown=breakdown,
+        provider=analysis.provider
+    )
 
 
 @router.post("/applications/{application_id}/submit", response_model=schemas.ApplicationOut)

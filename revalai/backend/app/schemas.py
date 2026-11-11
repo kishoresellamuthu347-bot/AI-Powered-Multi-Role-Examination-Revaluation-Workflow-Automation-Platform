@@ -32,6 +32,26 @@ class SubjectOut(BaseModel):
     class Config: from_attributes = True
 
 
+class ExamQuestionOut(BaseModel):
+    id: int
+    question_number: str
+    part: str
+    question_text: str
+    max_marks: float
+    expected_answer_key: Optional[str] = None
+    class Config: from_attributes = True
+
+
+class QuestionPaperOut(BaseModel):
+    id: int
+    paper_code: str
+    total_marks: float
+    duration_hours: float
+    instructions: Optional[str] = None
+    questions: List[ExamQuestionOut] = []
+    class Config: from_attributes = True
+
+
 class ResultOut(BaseModel):
     id: int
     marks: float
@@ -71,6 +91,7 @@ class ApplicationOut(BaseModel):
     revised_marks: Optional[float] = None
     created_at: dt.datetime
     subject: SubjectOut
+    question_paper: Optional[QuestionPaperOut] = None
     history: List[StatusHistoryOut] = []
     class Config: from_attributes = True
 
@@ -95,6 +116,7 @@ class AIAnalysisOut(BaseModel):
     max_marks: float
     confidence: float
     explanation: str
+    question_breakdown: Optional[List[dict]] = []
     provider: str
     class Config: from_attributes = True
 
