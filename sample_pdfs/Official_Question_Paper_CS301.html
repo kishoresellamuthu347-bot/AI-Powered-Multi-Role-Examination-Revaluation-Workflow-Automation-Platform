@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Official Question Paper — CS301</title>
+<style>
+  @page { size: A4; margin: 20mm; }
+  body { font-family: "Georgia", "Times New Roman", serif; color: #111; line-height: 1.5; padding: 25px; background: #fff; }
+  .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px; }
+  .header h2 { margin: 0; font-size: 16pt; text-transform: uppercase; letter-spacing: 1px; }
+  .header h3 { margin: 5px 0; font-size: 12pt; font-weight: normal; }
+  .course { font-weight: bold; font-size: 11pt; color: #002244; margin-top: 4px; }
+  .meta { display: flex; justify-content: space-between; font-weight: bold; font-size: 10pt; border-bottom: 1px dashed #666; padding-bottom: 6px; margin-bottom: 16px; font-family: monospace; }
+  .instructions { font-size: 9.5pt; font-style: italic; background: #f9f9f9; padding: 8px 12px; border: 1px solid #e0e0e0; margin-bottom: 20px; }
+  .part-title { font-weight: bold; font-size: 11.5pt; margin-top: 22px; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 4px; color: #8B0000; }
+  .q-item { margin-bottom: 20px; }
+  .q-head { display: flex; justify-content: space-between; font-weight: bold; font-size: 10.5pt; margin-bottom: 4px; }
+  .q-text { font-size: 10.5pt; text-align: justify; }
+  .key-box { background: #f0f4f8; border-left: 3px solid #1e40af; padding: 8px 12px; margin-top: 8px; font-family: monospace; font-size: 9pt; border-radius: 0 4px 4px 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>National Examination Revaluation Board</h2>
+  <h3>End-Semester University Degree Examination</h3>
+  <div class="course">Course: CS301 — Data Structures & Algorithms (Regulation 2025)</div>
+</div>
+
+<div class="meta">
+  <span>TIME: 3.00 HOURS</span>
+  <span>MAXIMUM: 100 MARKS</span>
+  <span>PAPER CODE: CS301-QP-2025</span>
+</div>
+
+<div class="instructions">
+  <b>General Instructions:</b> Attempt all questions. Show complete algebraic derivations, binary split trees, and priority queue relaxation steps. Rough work must be labeled clearly.
+</div>
+
+<div class="part-title">PART A — (1 &times; 35 = 35 Marks)</div>
+<div class="q-item">
+  <div class="q-head">
+    <span>Question 1. [Recurrence Relations & Asymptotic Analysis]</span>
+    <span>[35 MARKS]</span>
+  </div>
+  <div class="q-text">
+    Explain the Merge Sort algorithmic paradigm. State its recurrence relation in divide-and-conquer form and derive the tight asymptotic time complexity bound using the Master Theorem. Demonstrate the split and merge flow step-by-step on the 8-element array: <b>[38, 27, 43, 3, 9, 82, 10, 19]</b>.
+  </div>
+  <div class="key-box">
+    <b>Evaluation Rubric Key:</b><br/>
+    &bull; Recurrence formulation: T(n) = 2T(n/2) + &Theta;(n) [10 Marks]<br/>
+    &bull; Master Theorem Case 2 application: a=2, b=2 &rArr; T(n) = &Theta;(n log n) [10 Marks]<br/>
+    &bull; Step-by-step 2-way split & recombine trace on array [10 Marks]<br/>
+    &bull; Space complexity auxiliary buffer proof: O(n) [5 Marks]
+  </div>
+</div>
+
+<div class="part-title">PART B — (2 &times; 35/30 = 65 Marks)</div>
+<div class="q-item">
+  <div class="q-head">
+    <span>Question 2. [Self-Balancing Binary Search Trees]</span>
+    <span>[35 MARKS]</span>
+  </div>
+  <div class="q-text">
+    Define an AVL Tree and explain how the balance factor is maintained within {-1, 0, +1}. Construct an AVL tree by sequentially inserting the key sequence: <b>[15, 20, 24, 10, 13, 7, 30, 36, 25]</b>. Illustrate the balance factor after every insertion and specify whether Single (LL, RR) or Double (LR, RL) rotations are triggered.
+  </div>
+  <div class="key-box">
+    <b>Evaluation Rubric Key:</b><br/>
+    &bull; Definition: BF = Height(Left_Subtree) - Height(Right_Subtree) [10 Marks]<br/>
+    &bull; RR rotation executed at Node 15 upon inserting 24 [10 Marks]<br/>
+    &bull; LR double rotation executed at Node 15 upon inserting 10 and 13 [10 Marks]<br/>
+    &bull; Final verified balanced tree structure [5 Marks]
+  </div>
+</div>
+
+<div class="q-item">
+  <div class="q-head">
+    <span>Question 3. [Single-Source Shortest Paths & Graph Algorithms]</span>
+    <span>[30 MARKS]</span>
+  </div>
+  <div class="q-text">
+    Formulate Dijkstra's algorithm for finding the shortest path from a single source vertex in a directed weighted graph. State the critical constraint on edge weights. Explain how a Min-Priority Queue is employed during edge relaxation and compute the overall worst-case running time complexity.
+  </div>
+  <div class="key-box">
+    <b>Evaluation Rubric Key:</b><br/>
+    &bull; Algorithm formulation & non-negative weight prerequisite [10 Marks]<br/>
+    &bull; Relaxation step: if dist[u] + w(u,v) &lt; dist[v] then dist[v] = dist[u] + w(u,v) [10 Marks]<br/>
+    &bull; Min-Heap complexity analysis: O((V + E) log V) with auxiliary space O(V) [10 Marks]
+  </div>
+</div>
+
+</body>
+</html>

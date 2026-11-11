@@ -111,19 +111,31 @@ export default function DocumentUploadEvaluation({ subjectCode = "CS301", notify
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono text-charcoal-400 font-bold">Quick Demo Presets:</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] font-mono text-charcoal-400 font-bold">Download Samples:</span>
+            <a
+              href="/samples/Official_Question_Paper_CS301.pdf"
+              download="Official_Question_Paper_CS301.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-lg bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/60 text-xs font-bold text-blue-200 transition-all flex items-center gap-1"
+            >
+              📥 Question Paper PDF
+            </a>
+            <a
+              href="/samples/Student_Answer_Script_CS301.pdf"
+              download="Student_Answer_Script_CS301.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-lg bg-orange-600/30 border border-orange-500/50 hover:bg-orange-600/60 text-xs font-bold text-orange-200 transition-all flex items-center gap-1"
+            >
+              📥 Answer Script PDF
+            </a>
             <button
               onClick={() => loadSamplePreset("CS301")}
-              className="px-2.5 py-1.5 rounded-lg bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/60 text-xs font-bold text-blue-200 transition-all"
+              className="px-2.5 py-1.5 rounded-lg bg-emerald-600/30 border border-emerald-500/50 hover:bg-emerald-600/60 text-xs font-bold text-emerald-200 transition-all"
             >
-              Load CS301 (DSA)
-            </button>
-            <button
-              onClick={() => loadSamplePreset("CS304")}
-              className="px-2.5 py-1.5 rounded-lg bg-orange-600/30 border border-orange-500/50 hover:bg-orange-600/60 text-xs font-bold text-orange-200 transition-all"
-            >
-              Load CS304 (DBMS)
+              ⚡ Auto-Fill CS301
             </button>
           </div>
         </div>
@@ -282,3 +294,4 @@ export default function DocumentUploadEvaluation({ subjectCode = "CS301", notify
     </div>
   );
 }
+

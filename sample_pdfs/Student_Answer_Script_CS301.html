@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Student Answer Script — 21CS114</title>
+<style>
+  @page { size: A4; margin: 15mm; }
+  body { font-family: "Courier New", Courier, monospace; color: #0a192f; line-height: 1.6; padding: 25px; background: #fffcf0; border: 1px solid #d4c5a9; }
+  .cover { border: 2px double #333; padding: 15px; margin-bottom: 25px; background: #faf4e1; font-family: Georgia, serif; }
+  .cover-title { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; }
+  .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10pt; font-family: monospace; border-top: 1px solid #666; padding-top: 8px; }
+  .script-page { border-top: 2px dashed #999; padding-top: 20px; margin-top: 30px; }
+  .page-num { float: right; font-size: 9pt; font-weight: bold; background: #e8dbc3; padding: 2px 8px; border-radius: 4px; }
+  .ans-title { font-size: 12pt; font-weight: bold; text-decoration: underline; color: #001f3f; margin-bottom: 10px; }
+  .math-block { background: #f0e6d2; padding: 8px 12px; margin: 8px 0; border-left: 3px solid #b8860b; font-weight: bold; }
+  .diagram { white-space: pre; font-size: 9.5pt; background: #eadeca; padding: 10px; border: 1px dashed #8b7355; margin: 8px 0; }
+  .highlight { background: #fff2a8; padding: 1px 4px; font-weight: bold; }
+  .seal { margin-top: 20px; border-top: 1px solid #bbb; font-size: 8.5pt; color: #555; text-align: right; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-title">National Board of Examinations — Official Answer Booklet</div>
+  <div class="grid-info">
+    <span>CANDIDATE ROLL NO: <b>21CS114</b></span>
+    <span>COURSE CODE: <b>CS301</b></span>
+    <span>DEGREE: B.E. (Computer Science & Engg)</span>
+    <span>DATE OF EXAM: 12-NOV-2025</span>
+    <span>TOTAL PAGES WRITTEN: 03</span>
+    <span>EXAM CENTER: #402 HALL-A</span>
+  </div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="script-page">
+  <span class="page-num">PAGE 1 OF 3</span>
+  <div class="ans-title">Ans 1: Merge Sort Recurrence Relation & Complexity Analysis</div>
+  <p>Merge sort works on the <b>Divide and Conquer</b> design paradigm:</p>
+  <ol>
+    <li><b>Divide:</b> Split array A[low..high] at mid = (low + high) / 2 into two equal halves.</li>
+    <li><b>Conquer:</b> Recursively sort subarray A[low..mid] and A[mid+1..high].</li>
+    <li><b>Combine:</b> Merge the two sorted subarrays into a single sorted output.</li>
+  </ol>
+
+  <p><b>Recurrence Relation:</b></p>
+  <div class="math-block">
+    T(n) = 2 T(n / 2) + &Theta;(n)     [for n > 1]<br/>
+    T(1) = &Theta;(1)                [base case]
+  </div>
+
+  <p>Applying Master's Theorem for divide-and-conquer: T(n) = a T(n/b) + f(n)<br/>
+  Here a = 2, b = 2, f(n) = n^1<br/>
+  log_b(a) = log_2(2) = 1. Since f(n) = &Theta;(n^(log_b a)) = &Theta;(n^1), <span class="highlight">Case 2 of Master Theorem applies:</span></p>
+  <div class="math-block">
+    &rArr; T(n) = &Theta;(n^(log_b a) * log n) = &Theta;(n log n)
+  </div>
+
+  <p><b>Step-by-Step Split and Merge Trace on [38, 27, 43, 3, 9, 82, 10, 19]:</b></p>
+  <div class="diagram">
+Level 0:                 [38, 27, 43, 3, 9, 82, 10, 19]
+                               /                 \
+Level 1:            [38, 27, 43, 3]            [9, 82, 10, 19]
+                       /        \                /          \
+Level 2:           [38, 27]   [43, 3]         [9, 82]     [10, 19]
+                    /    \     /   \           /   \        /    \
+Level 3:          [38]  [27]  [43] [3]        [9]  [82]   [10]  [19]
+                   -------------------------------------------------
+Merge Level 2:     [27, 38]   [3, 43]         [9, 82]     [10, 19]
+Merge Level 1:        [3, 27, 38, 43]             [9, 10, 19, 82]
+Final Sorted:            [3, 9, 10, 19, 27, 38, 43, 82] (Sorted)
+  </div>
+  <p><b>Auxiliary Space Complexity:</b> O(n) required for temporary merge buffers.</p>
+  <div class="seal">AUTHENTIC SCRIPT SEAL #EXP-2025-CS301-P1 &bull; CANDIDATE SIGN: [VERIFIED]</div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="script-page">
+  <span class="page-num">PAGE 2 OF 3</span>
+  <div class="ans-title">Ans 2: AVL Tree Construction & Balance Factor (BF) Analysis</div>
+  <p>An AVL Tree is a Self-Balancing Binary Search Tree where balance factor condition holds for all nodes:</p>
+  <div class="math-block">
+    BF(Node) = Height(Left_Subtree) - Height(Right_Subtree) &isin; {-1, 0, +1}
+  </div>
+
+  <p><b>Sequential Insertion of keys: [15, 20, 24, 10, 13, 7, 30, 36, 25]:</b></p>
+  <ul>
+    <li><b>Insert 15, 20:</b> Root=15 (BF = -1), Right=20 (BF = 0). Tree is balanced.</li>
+    <li><b>Insert 24:</b> Node 15 has BF = -2 (Right-heavy). <span class="highlight">RR Imbalance at Node 15.</span><br/>
+    &rArr; <b>Apply Left Rotation (LL) on Node 15:</b><br/>
+    New Subtree Root = 20, Left child = 15 (BF = 0), Right child = 24 (BF = 0).</li>
+    <li><b>Insert 10, 13:</b> Node 15 Left child = 10, 10 Right child = 13. Node 15 BF = +2, Node 10 BF = -1.<br/>
+    <span class="highlight">LR Imbalance at Node 15:</span><br/>
+    &rArr; <b>Apply Double Rotation:</b> Left rotate on 10 &rArr; Right rotate on 15.<br/>
+    Subtree root becomes 13, left = 10, right = 15.</li>
+  </ul>
+
+  <div class="diagram">
+Final Balanced AVL Tree Representation:
+                 [ 20 ]               (BF = 0)
+               /        \
+            [ 13 ]      [ 30 ]        (BF = 0)
+           /      \    /      \
+         [ 10 ]  [ 15][ 24 ]  [ 36 ]  (BF = 0)
+         /               \
+       [ 7 ]            [ 25 ]
+  </div>
+  <p>Every node satisfies |BF| &le; 1. Search, insertion, and deletion worst-case time = O(log n).</p>
+  <div class="seal">AUTHENTIC SCRIPT SEAL #EXP-2025-CS301-P2 &bull; CANDIDATE SIGN: [VERIFIED]</div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="script-page">
+  <span class="page-num">PAGE 3 OF 3</span>
+  <div class="ans-title">Ans 3: Dijkstra's Single-Source Shortest Path Algorithm</div>
+  <p><b>Constraint:</b> Edge weights w(u, v) &ge; 0 (strictly non-negative).</p>
+  <p><b>Algorithm using Min-Heap Priority Queue Q:</b></p>
+  <div class="math-block">
+    1. Initialize dist[source] = 0, and dist[v] = &infin; for all v &isin; V \ {source}.<br/>
+    2. Insert all vertices into Min-Priority Queue Q keyed by dist[v].<br/>
+    3. while Q is not empty:<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;u = Extract_Min(Q)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;for each adjacent neighbor v of u:<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if dist[u] + w(u, v) &lt; dist[v]:<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dist[v] = dist[u] + w(u, v)   // Edge Relaxation<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decrease_Key(Q, v, dist[v])
+  </div>
+  <p><b>Time Complexity Analysis:</b><br/>
+  - Extract_Min called |V| times: O(V log V)<br/>
+  - Decrease_Key called |E| times: O(E log V)<br/>
+  - Total Worst-Case Time: <span class="highlight">O((V + E) log V)</span> with Binary Min-Heap.<br/>
+  - Space Complexity: O(V) for distance table and heap pointers.</p>
+  <div class="seal">AUTHENTIC SCRIPT SEAL #EXP-2025-CS301-P3 &bull; CONTROLLER SIGNED [END OF BOOKLET]</div>
+</div>
+
+</body>
+</html>
