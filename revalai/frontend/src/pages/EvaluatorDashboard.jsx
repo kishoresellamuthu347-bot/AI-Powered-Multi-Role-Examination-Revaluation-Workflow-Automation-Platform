@@ -45,7 +45,6 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
 
   const nav = [
     { id: "assignments", label: "Assignments", icon: ClipboardList },
-    { id: "upload", label: "Upload & Test PDF Evaluation", icon: Upload },
     { id: "history", label: "Evaluation History", icon: History },
   ];
 
@@ -349,16 +348,6 @@ export default function EvaluatorDashboard({ onLogout, notify }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-
-          {active === "upload" && (
-            <>
-              <SectionHeader 
-                title="Live Document Upload & Multi-Modal Evaluation" 
-                sub="Upload custom university Question Paper PDFs and handwritten Student Answer Scripts to evaluate." 
-              />
-              <DocumentUploadEvaluation subjectCode="CS301" notify={notify} />
             </>
           )}
 
